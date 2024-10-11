@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/css/style.css">
+    <title>Flight</title>
+</head>
+<body>
+    <%- include('./includes/nav.ejs', {token : token}) %>
+    <header>
+        <h1>Flight</h1>
+     </header>  
+        
+        
+            <div class="flight">                
+                <h2>from: <%= flight.from %></h2>
+                <h2>To: <%= flight.to %> </h2>
+                <p>Date: <%= flight.date %> </p>
+                <p>Price <%= flight.price %>€</p>
+                <h5>Company: <%= flight.company %></h5>
+
+                <button>
+                    <a href="/api/flights/">Show All</a>
+                </button>
+            </div>
+            
+</body>
+</html>

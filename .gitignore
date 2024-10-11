@@ -5,14 +5,14 @@ node_modules/
 #.env
 
 # IDE/editor specific files
-#.vscode/
+.vscode/
 .idea/
 
 # macOS specific files
 .DS_Store
 
 # Logs
-#logs/
+logs/
 *.log
 
 # Runtime data

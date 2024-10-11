@@ -1,0 +1,14 @@
+<nav>
+    <ul>
+        <li>
+            <a href="<%='/api/flights'%>">Home</a>
+        </li>
+        <% if(token) {%>
+        <li><a href="<%='/api/logout'%>">Logout</a></li>
+        <li><a href="<%= '/api/add-flight'%>">Add Flight</a></li>
+        <% } else { %>
+        <li><a href="<%='/api/login'%>">Login</a></li>
+        <li><a href="<%='/api/register'%>">Register</a></li>
+        <%}%>
+    </ul>
+</nav>
