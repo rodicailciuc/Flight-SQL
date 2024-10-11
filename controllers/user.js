@@ -12,38 +12,52 @@ import createUsersTable from '../models/user.js';
 const userControllers = {
     register: async (req, res) => {
         const { email, password, rePassword } = req.body;
-        //check if email already exists
-        const checkEmailQuery = `SELECT * FROM users WHERE email=?`;
-        const checkEmailParams = [email];
-        const result = await query(checkEmailQuery, checkEmailParams);
-        if (result.length > 0) {
-            return res.status(400).render('404', {
-                title: 'Email already exists',
-                message: 'Email already exist, please register'
-            });
-        }
-        //validate the email, password and check if the passwords match
-        const isEmailValid = validateEmail(email);
-        const isPasswordValid = validatePassword(password);
-        const doPasswordsMatch = matchPassword(password, rePassword);
-
-        if (isEmailValid && isPasswordValid && doPasswordsMatch) {
-            //hash the password
-            const hashedPassword = hashPassword(password);
-            //create user
-
-            const sqlQuery = `INSERT INTO users (email, password) VALUES (?, ?)`;
-            const params = [email, hashedPassword];
-            const results = await query(sqlQuery, params);
-            if (results.affectedRows > 0) {
-                //redirect to login
-                return res.status(302).redirect('/api/login');
-            } else {
+    
+        try {
+            // Check if email already exists
+            const checkEmailQuery = `SELECT * FROM users WHERE email=?`;
+            const checkEmailParams = [email];
+            const result = await query(checkEmailQuery, checkEmailParams);
+            
+            if (result.length > 0) {
                 return res.status(400).render('404', {
-                    title: 'Incorrect email or password',
-                    message: 'Incorrect email or password'
+                    title: 'Email already exists',
+                    message: 'Email already exists, please register'
                 });
             }
+    
+            // Validate email and passwords
+            const isEmailValid = validateEmail(email);
+            const isPasswordValid = validatePassword(password);
+            const doPasswordsMatch = matchPassword(password, rePassword);
+    
+            if (isEmailValid && isPasswordValid && doPasswordsMatch) {
+                // Hash the password
+                const hashedPassword = await hashPassword(password); // Ensure this is async
+                const sqlQuery = `INSERT INTO users (email, password) VALUES (?, ?)`;
+                const params = [email, hashedPassword];
+                const results = await query(sqlQuery, params);
+                
+                if (results.affectedRows > 0) {
+                    return res.status(302).redirect('/api/login'); // Consider adding a success message
+                } else {
+                    return res.status(400).render('404', {
+                        title: 'Registration failed',
+                        message: 'Failed to register user'
+                    });
+                }
+            } else {
+                return res.status(400).render('404', {
+                    title: 'Invalid input',
+                    message: 'Please check your inputs'
+                });
+            }
+        } catch (err) {
+            console.error(err);
+            res.status(500).render('404', {
+                title: 'Server error',
+                message: 'An error occurred. Please try again later.'
+            });
         }
     },
     login: async (req, res) => {
