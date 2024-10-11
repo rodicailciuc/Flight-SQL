@@ -13,9 +13,9 @@ Project/
 |-- config/
 |   ├── db.js           # Database configuration
 |-- controllers/
-|   ├── user.js       
+|   ├── user.js
 |-- middleware/
-|   ├── createLog.js  
+|   ├── createLog.js
 |-- models/
 |   ├── user.js          # Defines user schema for MySQL
 |-- routes/
