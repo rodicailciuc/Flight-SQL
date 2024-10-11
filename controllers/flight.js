@@ -18,16 +18,23 @@ const flightControllers = {
     getFlightById: async (req, res) => {
         const { id } = req.params;
 
-        const sqlQuery = `SELECT * FROM flights WHERE id=?`;
-        const params = [id];
-
-        const results = await query(sqlQuery, params);
-        if (results.length > 0) {
-            res.status(200).render('flight', { flight: results[0] });
-        } else {
-            res.status(404).render('404', {
-                title: 'The flight does not exist',
-                message: 'The flight does not exist'
+        try {
+            const sqlQuery = `SELECT * FROM flights WHERE id=?`;
+            const params = [id];
+            const results = await query(sqlQuery, params);
+            if (results.length > 0) {
+                res.status(200).render('flight', { flight: results[0] });
+            } else {
+                res.status(404).render('404', {
+                    title: 'The flight does not exist',
+                    message: 'The flight does not exist'
+                });
+            }
+        } catch (err) {
+            console.error(err);
+            res.status(500).render({
+                title: 'Server error',
+                message: 'Server error'
             });
         }
     },
@@ -37,16 +44,24 @@ const flightControllers = {
     addFlight: async (req, res) => {
         const { from, to, date, price, company } = req.body;
 
-        if (from && to && date && price && company) {
+        if (!from || !to || !date || !price || !company) {
+            return res.status(400).render('404', {
+                title: 'Invalid input',
+                message: 'All fields should be filled in'
+            });
+        }
+
+        try {
             const sqlQuery = `INSERT INTO flights (from_flight, to_flight, date, price, company) VALUES (?, ?, ?, ?, ?)`;
             const params = [from, to, date, price, company];
 
             await query(sqlQuery, params);
             res.status(302).redirect('/api/flights');
-        } else {
-            res.status(400).render('404', {
-                title: 'Invalid input',
-                message: 'All fields should be filled in'
+        } catch (err) {
+            console.error(err);
+            res.status(500).render({
+                title: 'Server error',
+                message: 'Failed to add flight'
             });
         }
     },
